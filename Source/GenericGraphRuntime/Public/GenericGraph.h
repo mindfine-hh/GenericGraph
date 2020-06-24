@@ -53,5 +53,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "GenericGraph_Editor")
 	bool bCanRenameNode;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "GenericGraph_Editor")
+	bool bCanBeCyclical;
+	
 #endif
 };
