@@ -131,4 +131,61 @@ void UGenericGraph::ClearGraph()
 	RootNodes.Empty();
 }
 
+void UGenericGraph::SetupGraph(TSubclassOf<UGenericGraphNode> NNodeType, TSubclassOf<UGenericGraphEdge> NEdgeType, FGameplayTagContainer NGraphTags, bool EdgeEnabled)
+{
+	NodeType = NNodeType;
+	EdgeType = NEdgeType;
+	GraphTags = NGraphTags;
+	bEdgeEnabled = EdgeEnabled;
+}
+
+UGenericGraphNode* UGenericGraph::CreateGraphNode(TSubclassOf<UGenericGraphNode> NodeClass, FName NodeName, int32 &NodeUID)
+{
+	UGenericGraphNode* NewNode = NewObject<UGenericGraphNode>(this,NodeClass,NodeName);
+	if (NewNode) {
+		//setup node
+		NewNode->Graph = this;
+		
+
+		//add node to list and store UID
+		NodeUID = AllNodes.Add(NewNode);
+		return NewNode;
+	} 
+	else
+	{
+		NodeUID = -1;
+		return nullptr;
+	}
+}
+
+UGenericGraphEdge* UGenericGraph::CreateGraphEdge(TSubclassOf<UGenericGraphEdge> EdgeClass, UGenericGraphNode* NodeA, UGenericGraphNode* NodeB, FName EdgeName)
+{
+	UGenericGraphEdge* NewEdge = NewObject<UGenericGraphEdge>(NodeA, EdgeClass, EdgeName);
+	if (NewEdge) {
+		//Setup Edge
+		NewEdge->Graph = this;
+		NewEdge->StartNode = NodeA;
+		NewEdge->EndNode = NodeB;
+
+		//set child parent relation between nodes
+		NodeA->ChildrenNodes.Add(NodeB);
+		NodeB->ParentNodes.Add(NodeA);
+
+		//Add Edge to NodeA pointing to NodeB
+		NodeA->Edges.Add(NodeB, NewEdge);
+		return NewEdge;
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+void UGenericGraph::AddRootNode(UGenericGraphNode* Node, int32& RootNodeUID)
+{
+	if (Node) {
+		RootNodeUID = RootNodes.Add(Node);
+	}
+}
+
 #undef LOCTEXT_NAMESPACE

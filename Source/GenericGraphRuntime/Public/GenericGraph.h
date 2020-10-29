@@ -15,7 +15,7 @@ public:
 	UGenericGraph();
 	virtual ~UGenericGraph();
 
-	UPROPERTY(EditDefaultsOnly, Category = "GenericGraph")
+	UPROPERTY(BlueprintReadWrite, Category = "GenericGraph", Meta = (ExposeOnSpawn=true))
 	FString Name;
 
 	UPROPERTY(EditDefaultsOnly, Category = "GenericGraph")
@@ -46,6 +46,21 @@ public:
 	void GetNodesByLevel(int Level, TArray<UGenericGraphNode*>& Nodes);
 
 	void ClearGraph();
+
+	UFUNCTION(BlueprintCallable, Category = "GenericGraph")
+	void SetupGraph(TSubclassOf<UGenericGraphNode> NNodeType, TSubclassOf<UGenericGraphEdge> NEdgeType, FGameplayTagContainer NGraphTags, bool EdgeEnabled = true);
+
+	UFUNCTION(BlueprintCallable, Category = "GenericGraph")
+	UGenericGraphNode* CreateGraphNode(TSubclassOf<UGenericGraphNode> NodeClass, FName NodeName, int32& NodeUID);
+	
+	UFUNCTION(BlueprintCallable, Category = "GenericGraph")
+	UGenericGraphEdge* CreateGraphEdge(TSubclassOf<UGenericGraphEdge> EdgeClass, UGenericGraphNode* NodeA, UGenericGraphNode* NodeB, FName EdgeName);
+
+	UFUNCTION(BlueprintCallable, Category = "GenericGraph")
+	void AddRootNode(UGenericGraphNode* Node, int32& RootNodeUID);
+
+
+
 
 #if WITH_EDITORONLY_DATA
 	UPROPERTY()
